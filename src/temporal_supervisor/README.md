@@ -63,7 +63,7 @@ Open http://localhost:3000 for the chat, and http://localhost:8233 for the Tempo
 
 `startlocalworker.sh` takes an optional task queue name. With one, the open-account workflow runs
 on that queue and this worker doesn't register it. That's for a separate open-account worker,
-such as the Java one in the other ports (not included here).
+such as the [Java one](../../java/README.md): start it with the same queue name.
 
 ## Running on Temporal Cloud
 
@@ -224,6 +224,9 @@ the buggy line. Then restart the worker. On the next workflow-task retry, the wo
 opens the account with the bonus (1% of the deposit, up to $500). To re-arm the demo, put the line
 back.
 
+The Java open-account worker has its own version of this bug. See its
+[README](../../java/README.md#bug-in-workflow-code-chaos-panel).
+
 ## Tests
 
 The default suite needs no model key, no Redis and no running Temporal service. It uses Temporal's
@@ -243,6 +246,9 @@ uv run pytest
 | `test_off_topic.py` | The Supervisor Agent's prompt, in both versions, declines off-topic questions |
 | `test_agents.py` | The agents, tools and handoffs match the PRD in both versions, and the open-account prompt has the PRD's lines |
 | `test_agent_loop.py` | The agent loop on its own: same-turn handoffs, tool schemas, tool errors, the client ID |
+
+The Java open-account worker has its own tests (`cd java && ./gradlew test`), described in its
+[README](../../java/README.md#tests).
 
 The chat workflow tests replace the model with a scripted one. It is just an activity registered
 under the name `invoke_model` ([tests/scripted_model.py](../../tests/scripted_model.py)).

@@ -63,6 +63,7 @@ Open Account Agent  (open_new_investment_account, get_account_opening_status,
 | [Temporal CLI](https://docs.temporal.io/cli) | 1.9 | Temporal version (local dev server) |
 | [Redis](https://redis.io/) | 8 | Temporal version (UI event stream, chaos flags) |
 | [Node.js](https://nodejs.org/) | 26 (any LTS from 20 should work) | Web UI |
+| [Java JDK](https://adoptium.net/) | 25 | Optional Java open-account worker only |
 | A model API key | Anthropic, OpenAI or Gemini | Both versions, and the live tests |
 
 Install the Python dependencies:
@@ -172,14 +173,14 @@ cd src/frontend && npm test -- --watchAll=false
 
 ## Optional components not included
 
-These components of the other ports are optional, and this port leaves them out for now:
+One optional component of the other ports is left out for now: the Redis claim check and codec
+server (`USE_CLAIM_CHECK`, `startcodecserver.sh`).
 
-* the Java open-account worker (`java/`). The worker scripts still accept a task queue name to
-  move the open-account workflow onto another worker;
-* the Redis claim check and codec server (`USE_CLAIM_CHECK`, `startcodecserver.sh`).
+The other optional components are included:
 
-The Temporal Cloud scripts are included: see
-[Running on Temporal Cloud](src/temporal_supervisor/README.md#running-on-temporal-cloud).
+* the [Java open-account worker](java/README.md), which runs the open-account workflow in Java;
+* the Temporal Cloud scripts. See
+  [Running on Temporal Cloud](src/temporal_supervisor/README.md#running-on-temporal-cloud).
 
 ## Repository layout
 
@@ -189,7 +190,8 @@ The Temporal Cloud scripts are included: see
 | [src/temporal_supervisor/](src/temporal_supervisor) | Temporal version: workflows, activities, worker, runners, scripts, README |
 | [src/api/](src/api) | The API for the web UI and its start script |
 | [src/common/](src/common) | The agent loop, agents and prompts, LiteLLM caller, data managers, Redis event stream, chaos flags, Temporal config |
-| [src/frontend/](src/frontend) | The shared React web UI, unchanged |
+| [src/frontend/](src/frontend) | The shared React web UI |
+| [java/](java) | Optional Java open-account worker and its README |
 | [data/](data) | Demo data |
 | [tests/](tests) | Default tests (`test_*.py`) and live tests (`live_*.py`) |
 
