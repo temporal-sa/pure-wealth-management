@@ -18,3 +18,10 @@ Start it from the repository root, against a local Temporal dev server and Redis
 ```bash
 ./src/api/startlocalapi.sh
 ```
+
+Against Temporal Cloud, with the settings in `setcloudenv.sh` (see
+[Running on Temporal Cloud](../temporal_supervisor/README.md#running-on-temporal-cloud)):
+
+```bash
+./src/api/startcloudapi.sh
+```

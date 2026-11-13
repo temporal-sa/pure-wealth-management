@@ -67,11 +67,51 @@ such as the Java one in the other ports (not included here).
 
 ## Running on Temporal Cloud
 
-This port doesn't include the cloud start scripts (an optional component). The worker, the API and
-the scripts connect using Temporal's
-[environment configuration](https://docs.temporal.io/develop/environment-configuration), so they
-read `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY` or the mTLS certificate and key
-paths from the environment or a config profile. This hasn't been tested against Temporal Cloud.
+The cloud scripts read the connection settings from `setcloudenv.sh` in the repository root,
+which is ignored by git. Copy the example and fill in your namespace, with either an mTLS client
+certificate and key or an API key:
+
+```bash
+cp setcloudenv.example setcloudenv.sh
+```
+
+Then, each in its own terminal, from the repository root (Redis and the web UI run locally as
+before):
+
+```bash
+redis-server
+```
+
+```bash
+./src/temporal_supervisor/startcloudworker.sh
+```
+
+```bash
+./src/api/startcloudapi.sh
+```
+
+```bash
+cd src/frontend && npm start
+```
+
+To approve an account opening as the compliance officer:
+
+```bash
+./src/temporal_supervisor/cloudsendcomplianceapproval.sh <open-account workflow ID>
+```
+
+Find the workflow ID in the Temporal Cloud UI (https://cloud.temporal.io), or with the
+[query above](#how-account-opening-works) run against your namespace. Each script prints the address
+and namespace it connects to, and stops with instructions if `setcloudenv.sh` is missing.
+`startcloudworker.sh` takes the same optional open-account task queue name as
+`startlocalworker.sh`.
+
+The connection uses Temporal's
+[environment configuration](https://docs.temporal.io/develop/environment-configuration), so the
+variables in `setcloudenv.sh` (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`,
+`TEMPORAL_TLS_CLIENT_CERT_PATH` and `TEMPORAL_TLS_CLIENT_KEY_PATH`, or `TEMPORAL_API_KEY`) work for
+every script. The scripts have been checked against a local server; the connection settings were
+checked to load for both mTLS and an API key, but the demo hasn't been run end to end on Temporal Cloud.
 
 ## How account opening works
 
@@ -134,6 +174,8 @@ These scenarios change the demo data. Reset it with `git checkout data/`.
 | `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` | none | Worker, standalone | The key for the provider in `LLM_MODEL` |
 | `TEMPORAL_ADDRESS` | `127.0.0.1:7233` | Worker, API, scripts | Temporal service address |
 | `TEMPORAL_NAMESPACE` | `default` | Worker, API, scripts | Temporal namespace |
+| `TEMPORAL_TLS_CLIENT_CERT_PATH` / `TEMPORAL_TLS_CLIENT_KEY_PATH` | none | Worker, API, scripts | mTLS client certificate and key for Temporal Cloud (`setcloudenv.sh`) |
+| `TEMPORAL_API_KEY` | none | Worker, API, scripts | API key for Temporal Cloud, instead of mTLS (`setcloudenv.sh`) |
 | `TEMPORAL_TASK_QUEUE` | `Supervisor` | Worker, API | Task queue of the chat workflow and its tools |
 | `TEMPORAL_TASK_QUEUE_OPEN_ACCOUNT` | the chat queue | Worker, runner | Task queue of the open-account workflow (set by `startlocalworker.sh <queue>`) |
 | `TEMPORAL_TASK_QUEUE_LLM` | `<TEMPORAL_TASK_QUEUE>-llm` | Worker | Task queue of the model calls |

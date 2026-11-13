@@ -176,9 +176,10 @@ These components of the other ports are optional, and this port leaves them out 
 
 * the Java open-account worker (`java/`). The worker scripts still accept a task queue name to
   move the open-account workflow onto another worker;
-* the Redis claim check and codec server (`USE_CLAIM_CHECK`, `startcodecserver.sh`);
-* the Temporal Cloud start and approval scripts (`setcloudenv.sh`, `startcloudworker.sh`,
-  `startcloudapi.sh`, `cloudsendcomplianceapproval.sh`).
+* the Redis claim check and codec server (`USE_CLAIM_CHECK`, `startcodecserver.sh`).
+
+The Temporal Cloud scripts are included: see
+[Running on Temporal Cloud](src/temporal_supervisor/README.md#running-on-temporal-cloud).
 
 ## Repository layout
 
