@@ -203,3 +203,4 @@ This port includes all the optional components of the other ports:
 | ADK | Google Agent Development Kit | [temporal-sa/adk-wealth-management](https://github.com/temporal-sa/adk-wealth-management) |
 | Pydantic | Pydantic AI | [temporal-sa/pyai-wealth-management](https://github.com/temporal-sa/pyai-wealth-management) |
 | Strands | Strands Agents | [temporal-sa/strands-wealth-management](https://github.com/temporal-sa/strands-wealth-management) |
+| Pure Python (this port) | None: plain Python and LiteLLM | [temporal-sa/bare-wealth-management](https://github.com/temporal-sa/bare-wealth-management) |
