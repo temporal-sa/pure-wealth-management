@@ -1,6 +1,7 @@
 package io.temporal.demo.wealthmanagement.common;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -42,7 +43,23 @@ public class ServerInfo {
     }
 
     public static boolean useClaimCheck() {
-        return Boolean.parseBoolean(getEnv("USE_CLAIM_CHECK", "false"));
+        return isTrue(getEnv("USE_CLAIM_CHECK", "false"));
+    }
+
+    /**
+     * Whether a flag's value means on. Accepts the values the Python components' str_to_bool
+     * accepts (true, t, yes, y or 1, in any case), so every component agrees on whether payloads
+     * are claim-checked. Boolean.parseBoolean accepted only "true": with USE_CLAIM_CHECK=1 the
+     * Python components claim-checked payloads this worker couldn't read.
+     */
+    static boolean isTrue(String value) {
+        if (value == null) {
+            return false;
+        }
+        return switch (value.trim().toLowerCase(Locale.ROOT)) {
+            case "true", "t", "yes", "y", "1" -> true;
+            default -> false;
+        };
     }
 
     /** For startup messages, worded like the Python worker's: whether claim check is on, and which Redis it uses. */
