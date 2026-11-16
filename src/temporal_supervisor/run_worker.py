@@ -86,6 +86,7 @@ async def main():
     print(f"Worker connected to {client_helper.address}. Chat and tools on {client_helper.taskQueue}; "
           f"model calls ({llm_model()}) on {client_helper.taskQueueLLM}, "
           f"max calls per second: {max_llm_calls or 'unlimited'}")
+    print(client_helper.claim_check_status())
     await asyncio.gather(worker.run(), llm_worker.run())
 
 

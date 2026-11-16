@@ -35,6 +35,8 @@ dependencies {
     implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    // Claim check storage (claimcheck/)
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
     implementation "io.temporal:temporal-spring-boot-starter:$javaSDKVersion"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     compileOnly "org.projectlombok:lombok:$lombokVersion"

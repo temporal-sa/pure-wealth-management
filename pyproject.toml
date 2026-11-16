@@ -18,6 +18,8 @@ dependencies = [
     # LiteLLM 1.106.2 imports mcp whenever a call passes tools, but doesn't declare it.
     "mcp==2.3.0",
     "temporalio==1.34.0",
+    # The claim check codec server.
+    "aiohttp>=3.11,<4",
 ]
 
 [build-system]

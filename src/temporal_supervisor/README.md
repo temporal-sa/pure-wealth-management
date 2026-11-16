@@ -166,6 +166,48 @@ approval sent by hand. For the third, it prints the workflow ID to approve. Run
 
 These scenarios change the demo data. Reset it with `git checkout data/`.
 
+## Claim check and codec server (optional)
+
+With claim check on, Temporal never sees the demo's data. Every payload a client sends (workflow
+and activity inputs and results, signals, updates and queries, including the model calls) is stored
+in Redis under a new UUID, and Temporal stores only the UUID. This is the
+[Claim Check pattern](https://www.enterpriseintegrationpatterns.com/patterns/messaging/StoreInLibrary.html),
+implemented as a [payload codec](https://docs.temporal.io/payload-codec) in
+[common/claim_check.py](../common/claim_check.py). The Java worker's codec uses the same format, so
+the two workers read each other's payloads.
+
+To turn it on, copy the example file in the repository root and make sure Redis is running:
+
+```bash
+cp setclaimcheck.example setclaimcheck.sh
+```
+
+Every start script sources `setclaimcheck.sh` if it exists: the workers (Python and Java, local and
+cloud), the APIs, the compliance approval scripts, the open-account runner and the codec server.
+Restart them all after creating or deleting it, so that they agree on whether claim check is on.
+
+Redis now holds part of every workflow's history:
+
+* **Lost keys:** if a key is lost, Temporal can't replay that workflow. For that reason, keys are
+  never expired.
+* **A non-demo deployment** needs Redis that is durable and highly available.
+
+The Temporal UI then shows only claim check IDs. To see the data, start the codec server, which
+decodes payloads for the UI by looking them up in Redis:
+
+```bash
+./src/temporal_supervisor/startcodecserver.sh
+```
+
+It listens on http://127.0.0.1:8081 and accepts requests from the local UI and Temporal Cloud only.
+To point the UI at it:
+
+1. Open the UI at http://localhost:8233 (not 127.0.0.1), or at https://cloud.temporal.io.
+2. Click the glasses icon at the top right.
+3. Choose "Use my browser setting and ignore Cluster-level setting".
+4. Enter `http://127.0.0.1:8081`, with no trailing space.
+5. Turn off "Pass the user access token" and "Include cross-origin credentials", then click Apply.
+
 ## Environment variables
 
 | Variable | Default | Used by | Meaning |
@@ -180,7 +222,8 @@ These scenarios change the demo data. Reset it with `git checkout data/`.
 | `TEMPORAL_TASK_QUEUE_OPEN_ACCOUNT` | the chat queue | Worker, runner | Task queue of the open-account workflow (set by `startlocalworker.sh <queue>`) |
 | `TEMPORAL_TASK_QUEUE_LLM` | `<TEMPORAL_TASK_QUEUE>-llm` | Worker | Task queue of the model calls |
 | `LLM_MAX_CALLS_PER_SECOND` | unlimited | Worker | Dispatch rate limit for model calls, across all workers |
-| `REDIS_HOST` / `REDIS_PORT` | `localhost` / `6379` | Worker, API | Redis for the event stream and the chaos flags |
+| `REDIS_HOST` / `REDIS_PORT` | `localhost` / `6379` | Workers, API, codec server | Redis for the event stream, the chaos flags and claim check |
+| `USE_CLAIM_CHECK` | `false` | Workers, API, scripts | Store payloads in Redis and send Temporal only their IDs (`setclaimcheck.sh`) |
 
 ## Failure scenarios
 
@@ -245,6 +288,7 @@ uv run pytest
 | `test_opening_status_notes.py` | Every agent is told each account opening's request and current state |
 | `test_off_topic.py` | The Supervisor Agent's prompt, in both versions, declines off-topic questions |
 | `test_agents.py` | The agents, tools and handoffs match the PRD in both versions, and the open-account prompt has the PRD's lines |
+| `test_claim_check.py` | The claim check codec, a workflow whose history holds only claim checks, and the codec server's decoding and CORS |
 | `test_agent_loop.py` | The agent loop on its own: same-turn handoffs, tool schemas, tool errors, the client ID |
 
 The Java open-account worker has its own tests (`cd java && ./gradlew test`), described in its

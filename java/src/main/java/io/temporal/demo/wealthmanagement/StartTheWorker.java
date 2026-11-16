@@ -40,5 +40,6 @@ public class StartTheWorker implements CommandLineRunner {
         worker.registerActivitiesImplementations(new UpdateParentWorkflowImpl());
         workerFactory.start();
         log.info("Open-account worker started: {}", ServerInfo.getServerInfo());
+        log.info(ServerInfo.claimCheckStatus());
     }
 }

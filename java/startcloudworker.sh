@@ -10,6 +10,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 cd "$(dirname "$0")" || exit 1
+[ -f ../setclaimcheck.sh ] && source ../setclaimcheck.sh
 export TEMPORAL_TASK_QUEUE_OPEN_ACCOUNT="$1"
 
 if [ ! -f ../setcloudenv.sh ]; then

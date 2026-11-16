@@ -171,16 +171,15 @@ The web UI has its own smoke test:
 cd src/frontend && npm test -- --watchAll=false
 ```
 
-## Optional components not included
+## Optional components
 
-One optional component of the other ports is left out for now: the Redis claim check and codec
-server (`USE_CLAIM_CHECK`, `startcodecserver.sh`).
-
-The other optional components are included:
+This port includes all the optional components of the other ports:
 
 * the [Java open-account worker](java/README.md), which runs the open-account workflow in Java;
 * the Temporal Cloud scripts. See
-  [Running on Temporal Cloud](src/temporal_supervisor/README.md#running-on-temporal-cloud).
+  [Running on Temporal Cloud](src/temporal_supervisor/README.md#running-on-temporal-cloud);
+* the Redis claim check and codec server. See
+  [Claim check and codec server](src/temporal_supervisor/README.md#claim-check-and-codec-server-optional).
 
 ## Repository layout
 
@@ -189,7 +188,7 @@ The other optional components are included:
 | [src/pure_supervisor/](src/pure_supervisor) | Standalone version and its README |
 | [src/temporal_supervisor/](src/temporal_supervisor) | Temporal version: workflows, activities, worker, runners, scripts, README |
 | [src/api/](src/api) | The API for the web UI and its start script |
-| [src/common/](src/common) | The agent loop, agents and prompts, LiteLLM caller, data managers, Redis event stream, chaos flags, Temporal config |
+| [src/common/](src/common) | The agent loop, agents and prompts, LiteLLM caller, data managers, Redis event stream, chaos flags, claim check codec, Temporal config |
 | [src/frontend/](src/frontend) | The shared React web UI |
 | [java/](java) | Optional Java open-account worker and its README |
 | [data/](data) | Demo data |

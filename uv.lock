@@ -875,6 +875,7 @@ name = "pure-wealth-management"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "aiohttp" },
     { name = "fastapi" },
     { name = "litellm" },
     { name = "mcp" },
@@ -892,6 +893,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aiohttp", specifier = ">=3.11,<4" },
     { name = "fastapi", specifier = "==0.162.0" },
     { name = "litellm", specifier = "==1.106.2" },
     { name = "mcp", specifier = "==2.3.0" },

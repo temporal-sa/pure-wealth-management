@@ -24,6 +24,15 @@ The workflow has no business logic of its own:
 * **The only Java activity:** it sends the status signal to the parent chat workflow, and it runs on
   the open-account task queue with the workflow.
 
+## Claim check
+
+With `setclaimcheck.sh` in the repository root (see
+[Claim check and codec server](../src/temporal_supervisor/README.md#claim-check-and-codec-server-optional)),
+both scripts turn on the claim check codec in
+[claimcheck/](src/main/java/io/temporal/demo/wealthmanagement/claimcheck). It uses the Redis at
+`REDIS_HOST` / `REDIS_PORT` (default `localhost:6379`), in the same format as the Python codec. Both the
+worker's client and the client that sends status updates to the chat use it.
+
 ## Prerequisites
 
 * [Java JDK 25](https://adoptium.net/). The Gradle wrapper (`./gradlew`, Gradle 9.8.2) is
@@ -125,8 +134,8 @@ See [Failure scenarios](../src/temporal_supervisor/README.md#failure-scenarios) 
 
 ## Tests
 
-The tests cover the saga, rollback in reverse, transient-failure retries, the transfer IDs and the
-workflow bug. They use the Temporal Java SDK's in-memory test environment with stub activities, so
+The tests cover the saga, rollback in reverse, transient-failure retries, the transfer IDs, the
+workflow bug, and the claim check codec (including decoding what the Python codec writes). They use the Temporal Java SDK's in-memory test environment with stub activities, so
 they need no Temporal server, Redis or model key:
 
 ```bash
@@ -135,6 +144,6 @@ cd java && ./gradlew test
 
 ## Differences from the reference port's Java worker
 
-The claim check codec is left out, like the rest of the claim check, and so are the Redis dependency
-and the unused service and starter classes. The Temporal Cloud script also supports an API key, not
-only mTLS.
+The unused service and starter classes are left out. The Temporal Cloud script also supports an API
+key, not only mTLS. When claim check is on, the status client uses the same codec as the worker, and a
+missing claim check fails with a clear error.

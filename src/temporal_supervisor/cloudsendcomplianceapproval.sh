@@ -2,6 +2,7 @@
 # Send compliance approval to an account opening on Temporal Cloud, as a compliance officer would.
 # Usage: cloudsendcomplianceapproval.sh <open-account workflow ID>
 cd "$(dirname "$0")" || exit 1
+[ -f ../../setclaimcheck.sh ] && source ../../setclaimcheck.sh
 if [ -z "$1" ]; then
    echo "You must specify a workflow ID"
    exit 1

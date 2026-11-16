@@ -2,6 +2,7 @@ package io.temporal.demo.wealthmanagement.common;
 
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowClientOptions;
+import io.temporal.common.converter.DataConverter;
 import io.temporal.serviceclient.SimpleSslContextBuilder;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
@@ -14,13 +15,28 @@ import java.io.InputStream;
 /**
  * The client the status activity uses to signal the parent chat workflow. The worker itself
  * uses the Spring-configured client (application*.yaml); this one is built from the same
- * environment variables, with an API key or an mTLS certificate and key when they are set.
+ * environment variables, with an API key or an mTLS certificate and key when they are set,
+ * and the same data converter as the worker's client (the claim check codec, when it is on).
  */
 public final class TemporalClient {
 
     private static volatile WorkflowClient client;
+    private static volatile DataConverter dataConverter;
 
     private TemporalClient() {
+    }
+
+    /** Set by claimcheck/TemporalOptionsConfig when claim check is on, before any status is sent. */
+    public static void setDataConverter(DataConverter converter) {
+        dataConverter = converter;
+    }
+
+    static WorkflowClientOptions clientOptions() {
+        WorkflowClientOptions.Builder builder = WorkflowClientOptions.newBuilder().setNamespace(ServerInfo.getNamespace());
+        if (dataConverter != null) {
+            builder.setDataConverter(dataConverter);
+        }
+        return builder.build();
     }
 
     /** One client for the process, created on first use. */
@@ -29,8 +45,7 @@ public final class TemporalClient {
             synchronized (TemporalClient.class) {
                 if (client == null) {
                     System.out.println("Temporal client for status updates: " + ServerInfo.getServerInfo());
-                    client = WorkflowClient.newInstance(serviceStubs(),
-                            WorkflowClientOptions.newBuilder().setNamespace(ServerInfo.getNamespace()).build());
+                    client = WorkflowClient.newInstance(serviceStubs(), clientOptions());
                 }
             }
         }

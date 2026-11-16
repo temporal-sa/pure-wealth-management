@@ -14,10 +14,12 @@ async def approve(workflow_id: str):
 
     client_helper = ClientHelper()
     print(f"address is {client_helper.address}")
+    print(client_helper.claim_check_status())
     client = await Client.connect(**client_helper.client_config)
 
     handle = client.get_workflow_handle(workflow_id=workflow_id)
     await handle.signal(OpenInvestmentAccountWorkflow.compliance_approved)
+    print(f"Sent compliance approval to {workflow_id}")
 
 async def main():
     parser = argparse.ArgumentParser(

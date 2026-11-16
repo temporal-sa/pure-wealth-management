@@ -13,6 +13,7 @@ async def main():
 
     client_helper = ClientHelper()
     print(f"address is {client_helper.address}, open-account task queue is {client_helper.taskQueueOpenAccount}")
+    print(client_helper.claim_check_status())
     client = await Client.connect(**client_helper.client_config)
     print("Running the first scenario:")
     await scenario1(client, client_helper)

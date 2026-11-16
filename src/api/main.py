@@ -26,6 +26,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     client_helper = ClientHelper()
     task_queue = client_helper.taskQueue
     temporal_client = await Client.connect(**client_helper.client_config)
+    print(f"API connected to {client_helper.address}, namespace {client_helper.namespace or 'default'}")
+    print(client_helper.claim_check_status())
     yield
     print("API is shutting down...")
     # app teardown

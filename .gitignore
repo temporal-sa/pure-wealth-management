@@ -2,6 +2,7 @@ __pycache__
 .pytest_cache
 /setllmkey.sh
 /setcloudenv.sh
+/setclaimcheck.sh
 .venv
 .idea
 .vscode

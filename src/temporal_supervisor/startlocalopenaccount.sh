@@ -6,6 +6,7 @@
 # With a task queue name, the workflow runs on that queue: start the worker that polls
 # it first.
 cd "$(dirname "$0")" || exit 1
+[ -f ../../setclaimcheck.sh ] && source ../../setclaimcheck.sh
 [ -f ../../setllmkey.sh ] && source ../../setllmkey.sh
 if [ -n "$1" ]; then
   export TEMPORAL_TASK_QUEUE_OPEN_ACCOUNT="$1"

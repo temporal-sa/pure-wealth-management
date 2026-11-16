@@ -41,12 +41,26 @@ public class ServerInfo {
         return getEnv("TEMPORAL_TASK_QUEUE_OPEN_ACCOUNT", getTaskqueue());
     }
 
+    public static boolean useClaimCheck() {
+        return Boolean.parseBoolean(getEnv("USE_CLAIM_CHECK", "false"));
+    }
+
+    /** For startup messages, worded like the Python worker's: whether claim check is on, and which Redis it uses. */
+    public static String claimCheckStatus() {
+        if (!useClaimCheck()) {
+            return "Claim check: off";
+        }
+        return "Claim check: ON (payloads stored in Redis at "
+                + getEnv("REDIS_HOST", "localhost") + ":" + getEnv("REDIS_PORT", "6379") + ")";
+    }
+
     /** For logging: never includes the API key itself. */
     public static Map<String, String> getServerInfo() {
         Map<String, String> info = new LinkedHashMap<>();
         info.put("address", getAddress());
         info.put("namespace", getNamespace());
         info.put("auth", !getApiKey().isEmpty() ? "API key" : !getCertPath().isEmpty() ? "mTLS" : "none");
+        info.put("claimCheck", String.valueOf(useClaimCheck()));
         info.put("taskQueue", getTaskqueue());
         info.put("taskQueueOpenAccount", getTaskqueueOpenAccount());
         return info;
