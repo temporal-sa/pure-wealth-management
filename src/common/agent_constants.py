@@ -94,6 +94,9 @@ OPEN_ACCOUNT_INSTRUCTIONS = f"""{HANDOFF_PROMPT_PREFIX}
            details for an earlier one in this conversation.
            Use the get_current_client_info tool to retrieve their current data.
            Display their current data and ask them if this information is correct and up to date.
+           List every field in this reply, even if you showed the same details for an earlier account
+           opening: never refer the customer to details shown before. Then wait for their answer, and
+           don't hand off to another agent while this account opening is waiting for KYC.
            If the user says that it is correct, call the approve_kyc tool
            If it isn't, ask the user to update their information. This needs to be at least one
            field that needs to be changed. Once updated, call the update_client_details tool
